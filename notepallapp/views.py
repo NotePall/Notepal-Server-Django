@@ -2,7 +2,6 @@ from django.shortcuts import render
 from .models import *
 from .serializer import *
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .permission import IsNoteOwner, IsStickyNoteOwner
@@ -16,11 +15,12 @@ class StickyNoteViewSet(ModelViewSet):
     # This creates a sticky note linked to the user 
     def create(self, request):
         data = request.data
-        data['editor'] = request.user.id # we added the forign key to the data before sending it to the database
+        data['creator'] = request.user.id # we added the forign key to the data before sending the data it to the database
         serializer = self.get_serializer(data=data) # we serialize the data and check if its valide before storing it
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer) #  now we create the data in the database
         headers = self.get_success_headers(serializer.data)
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     # This updates the sticky notes linked to a user
@@ -29,9 +29,7 @@ class StickyNoteViewSet(ModelViewSet):
         instance = self.get_object() # here we create an instance of our object
         data = request.data # we get the data inorder to added the editor field into it
         data['editor'] = request.user.id  # we add our forign key to the data before storing it
-        serializer = self.get_serializer(instance, data=data, partial=partial)
-        
-        # we validate the serializer before we then perform updates 
+        serializer = self.get_serializer(instance, data=data, partial=partial) # we validate the serializer before we then perform updates 
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer) 
 
@@ -48,6 +46,7 @@ class StickyNoteViewSet(ModelViewSet):
     # This makes sure that data for a specific user
     def get_queryset(self):
         return super().get_queryset().filter(editor=self.request.user)
+
 
 #  This represent our Note API to be consumed
 """

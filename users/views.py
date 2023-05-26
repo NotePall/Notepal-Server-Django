@@ -5,6 +5,7 @@ from .serializer import UserSerializer
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 
 # Create your views here.
@@ -27,6 +28,7 @@ class ObtainToken(ObtainAuthToken):
 # This  registers the user in our data base and returns a message based on circumstances
 class RegisterUser(APIView):
     serializer_class = UserSerializer
+    permission_class = [AllowAny]
 
     def post(self, request):
         data = request.data
