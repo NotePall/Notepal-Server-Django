@@ -8,9 +8,9 @@ from django.contrib.auth.models import User
 
 class StickyNote(models.Model):
     content = models.CharField(max_length=300)
-    color = models.CharField(max_length=10)
+    color = models.CharField(max_length=30)
     favorite = models.BooleanField()
-    label = models.CharField(max_length=15)
+    label = models.CharField(max_length=15, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE) # we take our foreign from the base user

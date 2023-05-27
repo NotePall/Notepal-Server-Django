@@ -28,7 +28,7 @@ class StickyNoteViewSet(ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object() # here we create an instance of our object
         data = request.data # we get the data inorder to added the editor field into it
-        data['editor'] = request.user.id  # we add our forign key to the data before storing it
+        data['creator'] = request.user.id  # we add our forign key to the data before storing it
         serializer = self.get_serializer(instance, data=data, partial=partial) # we validate the serializer before we then perform updates 
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer) 
@@ -45,7 +45,7 @@ class StickyNoteViewSet(ModelViewSet):
 
     # This makes sure that data for a specific user
     def get_queryset(self):
-        return super().get_queryset().filter(editor=self.request.user)
+        return super().get_queryset().filter(creator=self.request.user)
 
 
 #  This represent our Note API to be consumed
